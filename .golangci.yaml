@@ -1,0 +1,43 @@
+---
+linters:
+  enable:
+    - bodyclose
+    - depguard
+    - dogsled
+    - dupl
+    - errcheck
+    - exportloopref
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goimports
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - prealloc
+    - revive
+    - staticcheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
+
+linters-settings:
+  lll:
+    line-length: 140
+  dupl:
+    # tokens count to trigger issue, 150 by default
+    threshold: 250
+issues:
+  exclude:
+    - "^exported .* should have comment or be unexported"
+run:
+  timeout: 3m
+service:
+  golangci-lint-version: 1.20.x

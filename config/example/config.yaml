@@ -1,0 +1,7 @@
+app:
+  server:
+    port: 8888
+
+  log:
+    level: debug
+    local: true
