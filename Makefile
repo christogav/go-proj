@@ -44,7 +44,9 @@ test:
 # Lint
 .PHONY: lint
 lint: ## Run linters over assets
+ifdef $(PROTOS)
 	$(BUF) lint -v
+endif
 	goimports -d -e -w ./cmd ./pkg
 	golangci-lint run -v ./...
 
@@ -63,8 +65,10 @@ vendor: ## Tidy go.mod, update dependencies, and vendor them
 api: ./pkg/api/.gen ## Generate API client/server code
 
 pkg/api/.gen: .env $(PROTOS)
+ifdef $(PROTOS)
 	$(BUF) generate -v
 	@touch pkg/api/.gen
+endif
 
 # Manage dependencies
 .PHONY: deps
