@@ -1,11 +1,13 @@
 package logging
 
 import (
+	"os"
 	"strings"
 
 	stdlog "log"
 
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 )
@@ -16,20 +18,40 @@ type (
 	}
 )
 
+var (
+	logger = zerolog.New(os.Stdout).Level(zerolog.TraceLevel).With().Timestamp().Logger()
+
+	Module = fx.Module(
+		"logging",
+
+		fx.Provide(newZeroLogger),
+	)
+
+	WithLogger = fx.WithLogger(newFxLogger)
+)
+
+func Init() {
+	if os.Getenv("LOCAL") != "" {
+		logger = zerolog.New(zerolog.NewConsoleWriter()).Level(zerolog.TraceLevel).With().Timestamp().Logger()
+	}
+
+	stdlog.SetFlags(0)
+	stdlog.SetOutput(logger)
+}
+
 func newZeroLogger(config Config) (*zerolog.Logger, error) {
-	var logger = zerolog.New(zerolog.NewConsoleWriter()).With().Timestamp().Logger()
+	log.Logger = logger
 
 	level, err := zerolog.ParseLevel(config.Level)
 	if err != nil {
 		return nil, err
 	}
 
-	zerolog.SetGlobalLevel(level)
-	logger.Level(level)
-	stdlog.SetFlags(0)
-	stdlog.SetOutput(logger)
-
-	logger.Info().Msg("newZeroLogger")
+	if level < zerolog.NoLevel {
+		logger.Info().Msgf("Setting log level to: %s", level.String())
+		zerolog.SetGlobalLevel(level)
+		logger.Level(level)
+	}
 
 	return &logger, nil
 }
@@ -37,14 +59,6 @@ func newZeroLogger(config Config) (*zerolog.Logger, error) {
 func newFxLogger(logger *zerolog.Logger) fxevent.Logger {
 	return &ZeroLogger{logger}
 }
-
-var Module = fx.Module(
-	"logging",
-
-	fx.Provide(newZeroLogger),
-
-	fx.WithLogger(newFxLogger),
-)
 
 // Assert that our `ZeroLogger` implements `fxevent.Logger`.
 var _ fxevent.Logger = (*ZeroLogger)(nil)

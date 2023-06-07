@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/christogav/go-proj/internal/config"
+	"github.com/christogav/go-proj/internal/grpc"
 	"github.com/christogav/go-proj/internal/logging"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/fx"
@@ -15,13 +16,8 @@ type (
 	}
 
 	App struct {
-		Server Server         `yaml:"server"`
+		Server grpc.Config    `yaml:"server"`
 		Log    logging.Config `yaml:"logging"`
-	}
-
-	Server struct {
-		Host string `yaml:"host"`
-		Port int    `yaml:"port" validate:"required"`
 	}
 )
 
@@ -32,6 +28,10 @@ var ConfigModule = fx.Module(
 
 	fx.Provide(func(config Config) logging.Config {
 		return config.App.Log
+	}),
+
+	fx.Provide(func(config Config) grpc.Config {
+		return config.App.Server
 	}),
 )
 

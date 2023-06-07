@@ -21,6 +21,7 @@ PROTOS		:= $(shell find api -name "*.proto")
 CMDS		:= $(wildcard ./cmd/*)
 BINARIES	:= $(subst cmd,bin,$(CMDS))
 GO_FILES	:= $(shell find . -name "*.go")
+LOCAL		?= TRUE
 
 .PHONY: all
 all: lint api test build
