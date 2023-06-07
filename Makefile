@@ -44,7 +44,7 @@ test:
 # Lint
 .PHONY: lint
 lint: ## Run linters over assets
-ifdef $(PROTOS)
+ifneq ($(PROTOS),)
 	$(BUF) lint -v
 endif
 	goimports -d -e -w ./cmd ./pkg
@@ -65,7 +65,7 @@ vendor: ## Tidy go.mod, update dependencies, and vendor them
 api: ./pkg/api/.gen ## Generate API client/server code
 
 pkg/api/.gen: .env $(PROTOS)
-ifdef $(PROTOS)
+ifneq ($(PROTOS),)
 	$(BUF) generate -v
 	@touch pkg/api/.gen
 endif
