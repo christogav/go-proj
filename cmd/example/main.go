@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/christogav/go-proj/internal/grpc"
-	hellov1 "github.com/christogav/go-proj/internal/hello/v1"
 	"github.com/christogav/go-proj/internal/logging"
 	"go.uber.org/fx"
 )
@@ -19,7 +18,6 @@ func main() {
 		ConfigModule,
 		logging.Module,
 		grpc.Module,
-		hellov1.Module,
 
 		logging.WithLogger,
 	)
