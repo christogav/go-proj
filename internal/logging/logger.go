@@ -16,6 +16,11 @@ type (
 	ZeroLogger struct {
 		Logger *zerolog.Logger
 	}
+
+	// Config defines a common definition of logging options.
+	Config struct {
+		Level string `yaml:"level"`
+	}
 )
 
 var (

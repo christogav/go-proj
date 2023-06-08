@@ -4,4 +4,3 @@ app:
 
   log:
     level: debug
-    local: true
