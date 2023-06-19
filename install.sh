@@ -1,5 +1,5 @@
 #!/bin/bash
 
-git clone https://github.com/christogav/go-proj.git --depth 1 $@
+git clone https://github.com/christogav/go-proj.git --depth 1 $0
 
-rm -rf $@/.git
+rm -rf $0/.git
