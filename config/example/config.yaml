@@ -1,6 +1,4 @@
-app:
-  server:
-    port: 8888
+port: 8888
 
-  log:
-    level: debug
+log:
+  level: debug

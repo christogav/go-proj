@@ -8,7 +8,6 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 )
 
@@ -16,40 +15,25 @@ type (
 	ZeroLogger struct {
 		Logger *zerolog.Logger
 	}
-
-	// Config defines a common definition of logging options.
-	Config struct {
-		Level string `yaml:"level"`
-	}
 )
 
 var (
 	logger = zerolog.New(os.Stdout).Level(zerolog.TraceLevel).With().Timestamp().Logger()
-
-	Module = fx.Module(
-		"logging",
-
-		fx.Provide(newZeroLogger),
-	)
-
-	WithLogger = fx.WithLogger(newFxLogger)
 )
 
-func Init() {
-	if os.Getenv("LOCAL") != "" {
+func Init() error {
+	cfg := newConfig()
+
+	if cfg.Dev {
 		logger = zerolog.New(zerolog.NewConsoleWriter()).Level(zerolog.TraceLevel).With().Timestamp().Logger()
 	}
 
 	stdlog.SetFlags(0)
 	stdlog.SetOutput(logger)
-}
 
-func newZeroLogger(config Config) (*zerolog.Logger, error) {
-	log.Logger = logger
-
-	level, err := zerolog.ParseLevel(config.Level)
+	level, err := zerolog.ParseLevel(cfg.Level)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if level < zerolog.NoLevel {
@@ -58,7 +42,13 @@ func newZeroLogger(config Config) (*zerolog.Logger, error) {
 		logger.Level(level)
 	}
 
-	return &logger, nil
+	return nil
+}
+
+func newZeroLogger() *zerolog.Logger {
+	log.Logger = logger
+
+	return &logger
 }
 
 func newFxLogger(logger *zerolog.Logger) fxevent.Logger {

@@ -6,28 +6,14 @@ import (
 	"net"
 	"net/url"
 
-	"github.com/christogav/go-proj/internal/utils"
 	"github.com/rs/zerolog"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-var Module = fx.Module(
-	"grpc",
-
-	fx.Provide(newGrpc),
-)
-
-type (
-	Config struct {
-		Host string `yaml:"host"`
-		Port int    `yaml:"port" validate:"required"`
-	}
-)
-
-func newGrpc(lifecycle fx.Lifecycle, logger *zerolog.Logger, config Config) (*grpc.Server, error) {
-	uriString := fmt.Sprintf("tcp://%v:%v", utils.StringWithDefault(config.Host, "0.0.0.0"), config.Port)
+func newGrpc(lifecycle fx.Lifecycle, logger *zerolog.Logger, config *Config) (*grpc.Server, error) {
+	uriString := fmt.Sprintf("tcp://%v:%v", config.Host, config.Port)
 
 	uri, err := url.Parse(uriString)
 	if err != nil {
