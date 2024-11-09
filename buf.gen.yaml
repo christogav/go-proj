@@ -1,12 +1,13 @@
-version: v1
+version: v2
 managed:
   enabled: true
-  go_package_prefix:
-    default: github.com/christogav/go-proj
+  override:
+    - file_option: go_package_prefix
+      value: github.com/christogav/go-proj
 plugins:
-  - name: go
+  - local: protoc-gen-go
     out: pkg/api
     opt: paths=source_relative
-  - name: go-grpc
+  - local: protoc-gen-go-grpc
     out: pkg/api
     opt: paths=source_relative
